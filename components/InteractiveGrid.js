@@ -4,11 +4,10 @@ import React, { useState, useRef, useEffect } from 'react';
 
 const InteractiveGrid = () => {
   const gridRef = useRef(null);
-  const [lines, setLines] = useState([]); // Array to hold all the lines
+  const [lines, setLines] = useState([]);
   const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
   const [currentPosition, setCurrentPosition] = useState({ x: 0, y: 0 });
 
-  // Function to update the current position based on mouse events
   const updatePosition = (clientX, clientY) => {
     const rect = gridRef.current.getBoundingClientRect();
     const x = clientX - rect.left - (rect.width / 2);
@@ -23,9 +22,7 @@ const InteractiveGrid = () => {
 
     const handleMouseClick = (e) => {
       updatePosition(e.clientX, e.clientY);
-      // Add the current line to the lines array
       setLines(prevLines => [...prevLines, { start: startPosition, end: currentPosition }]);
-      // Set the new start position
       setStartPosition({ ...currentPosition });
     };
 
@@ -39,7 +36,6 @@ const InteractiveGrid = () => {
     };
   }, [currentPosition]);
 
-  // Function to calculate the style for each line
   const getLineStyle = (start, end) => {
     const angle = Math.atan2(end.y - start.y, end.x - start.x) * 180 / Math.PI;
     const length = Math.sqrt((end.x - start.x) ** 2 + (end.y - start.y) ** 2);
@@ -50,20 +46,35 @@ const InteractiveGrid = () => {
     };
   };
 
+  // Function to render a circle at a given position
+  const renderCircle = (position) => (
+    <div style={{
+      position: 'absolute',
+      borderRadius: '50%',
+      width: '10px',
+      height: '10px',
+      backgroundColor: 'red',
+      top: `calc(50% + ${position.y}px - 5px)`, // Adjusting for the circle's size
+      left: `calc(50% + ${position.x}px - 5px)`, // Adjusting for the circle's size
+    }} />
+  );
+
   return (
     <div ref={gridRef} style={{ position: 'relative', width: '100%', height: '100vh' }}>
-      {/* Render all previous lines */}
       {lines.map((line, index) => (
-        <div key={index} style={{
-          position: 'absolute',
-          background: 'blue',
-          height: '2px',
-          ...getLineStyle(line.start, line.end),
-          top: `calc(50% + ${line.start.y}px)`,
-          left: `calc(50% + ${line.start.x}px)`,
-        }} />
+        <>
+          <div key={`line-${index}`} style={{
+            position: 'absolute',
+            background: 'blue',
+            height: '2px',
+            ...getLineStyle(line.start, line.end),
+            top: `calc(50% + ${line.start.y}px)`,
+            left: `calc(50% + ${line.start.x}px)`,
+          }} />
+          {renderCircle(line.start)}
+          {renderCircle(line.end)}
+        </>
       ))}
-      {/* Render the current line */}
       <div style={{
         position: 'absolute',
         background: 'blue',
@@ -72,7 +83,8 @@ const InteractiveGrid = () => {
         top: `calc(50% + ${startPosition.y}px)`,
         left: `calc(50% + ${startPosition.x}px)`,
       }} />
-      {/* The grid */}
+      {renderCircle(startPosition)}
+      {renderCircle(currentPosition)}
       <div style={{
         position: 'absolute',
         border: '1px solid #ccc',
@@ -85,9 +97,7 @@ const InteractiveGrid = () => {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(10px, 1fr))',
         gridAutoRows: '10px',
-      }}>
-        {/* Render grid dots here */}
-      </div>
+      }} />
     </div>
   );
 };
