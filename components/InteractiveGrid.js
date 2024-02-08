@@ -15,6 +15,20 @@ const InteractiveGrid = () => {
     setCurrentPosition({ x, y });
   };
 
+  const gridStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#000000', 
+    background: `radial-gradient(circle, #686868 1px, #000000 1px), 
+                 radial-gradient(circle, #686868 1px, #000000 1px)`, // Adjusted to use #000000 for a blacker appearance
+    backgroundPosition: '0 0, 25px 25px',
+    backgroundSize: '50px 50px',
+  };
+
   useEffect(() => {
     const handleMouseMove = (e) => {
       updatePosition(e.clientX, e.clientY);
@@ -60,7 +74,7 @@ const InteractiveGrid = () => {
   );
 
   return (
-    <div ref={gridRef} style={{ position: 'relative', width: '100%', height: '100vh' }}>
+    <div ref={gridRef} style={gridStyle}>
       {lines.map((line, index) => (
         <>
           <div key={`line-${index}`} style={{
